@@ -5,12 +5,11 @@ from typing import Type, List
 
 server = Flask(__name__)
 CORS(server)
-user_collection = None
+tag_collection = None
 
 def set_mongo_client(mongo_client: MongoClient):
-    global user_collection
-    user_collection = mongo_client.get_database("brain_storm").get_collection("tag")
-    user_collection.insert_one({"name": "tags", "strings": []})
+    global tag_collection
+    tag_collection = mongo_client.get_database("brain_storm").get_collection("tag")
 
 @server.route("/")
 def index():
@@ -18,13 +17,23 @@ def index():
 
 @server.route("/tags", methods=["GET"])
 def get_all_tags():
-    result = user_collection.find_one({"name": "tags"}, {"_id": 0, "tags": 1})
-    if result:
-        return jsonify({"tags": result["tags"]})
+    tags = tag_collection.find()
+    result = {}
+    for tag in tags:
+        result[tag["Name"]] = tag["Count"]
+    return jsonify({"tags": result})
+    
 
 @server.route("/tag/<name>", methods=["POST"])
 def add_tag(name):
-    user_collection.update_one({"name": "tags"}, {"$push": {"tags": name}}, upsert=True)
+    tag = tag_collection.find_one({"Name": name})
+    if tag:
+        # increaase count by one
+        count = tag["Count"]
+        count += 1
+        tag_collection.update_one({"Name": name}, {"$inc": {"Count": 1}})
+    else:
+        tag_collection.insert_one({"Name": name, "Count": 1})
     return jsonify("Tag was added succefully"), 201
 
 
