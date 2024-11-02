@@ -34,7 +34,7 @@ def add_tag(name):
         tag_collection.update_one({"Name": name}, {"$inc": {"Count": 1}})
     else:
         tag_collection.insert_one({"Name": name, "Count": 1})
-    return jsonify("Tag was added succefully"), 201
+    return jsonify({"count": count}), 201
 
 
 if __name__ == "__main__":
