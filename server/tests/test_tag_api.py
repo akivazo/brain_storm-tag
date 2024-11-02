@@ -27,11 +27,17 @@ def test_get_all_tags(client: FlaskClient):
     assert response.status_code == 201
     response = client.post("/tag/travel")
     assert response.status_code == 201
+    response = client.post("/tag/housing")
+    assert response.status_code == 201
+    response = client.post("/tag/housing")
+    assert response.status_code == 201
+    response = client.post("/tag/tech")
+    assert response.status_code == 201
 
     response = client.get("tags")
     tags = response.get_json()["tags"]
 
-    assert tags == ["tech", "housing", "travel"]
+    assert tags == {"tech": 2, "housing": 3, "travel": 1} 
 
     response = client.post("/tag/food")
     assert response.status_code == 201
@@ -39,4 +45,11 @@ def test_get_all_tags(client: FlaskClient):
     response = client.get("tags")
     tags = response.get_json()["tags"]
 
-    assert tags == ["tech", "housing", "travel", "food"]
+    assert tags == {"tech": 2, "housing": 3, "travel": 1, "food": 1} 
+
+def test_no_tags(client: FlaskClient):
+
+    response = client.get("tags")
+    tags = response.get_json()["tags"]
+    
+    assert tags == {}
