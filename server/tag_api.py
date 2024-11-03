@@ -47,7 +47,8 @@ def delete_tag(name):
         count = tag["Count"]
         if count > 1:
             tag_collection.update_one({"Name": name}, {"$inc": {"Count": -1}})
-        tag_collection.delete_one({"Name": name})
+        else:
+            tag_collection.delete_one({"Name": name})
         count -= 1
     return jsonify({"count": count}), 200
 
