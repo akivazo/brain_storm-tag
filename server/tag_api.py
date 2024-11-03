@@ -38,6 +38,19 @@ def add_tag(name):
         tag_collection.insert_one({"Name": name, "Count": 1})
     return jsonify({"count": count}), 201
 
+@server.route("/tag/<name>", methods=["DELETE"])
+def delete_tag(name):
+    tag = tag_collection.find_one({"Name": name})
+    count = 0
+    if tag:
+        # increaase count by one
+        count = tag["Count"]
+        if count > 1:
+            tag_collection.update_one({"Name": name}, {"$inc": {"Count": -1}})
+        tag_collection.delete_one({"Name": name})
+        count -= 1
+    return jsonify({"count": count}), 200
+
 
 if __name__ == "__main__":
     import os, dotenv

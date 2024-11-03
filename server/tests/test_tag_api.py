@@ -54,3 +54,21 @@ def test_no_tags(client: FlaskClient):
     tags = response.get_json()["tags"]
     
     assert tags == {}
+
+def test_delete_tags(client: FlaskClient):
+    response = client.post("/tag/tech")
+    assert response.get_json()["count"] == 1
+
+    response = client.post("/tag/housing")
+    response = client.post("/tag/housing")
+
+    assert response.get_json()["count"] == 2
+
+    response = client.delete("/tag/tech")
+    assert response.get_json()["count"] == 0
+
+    response = client.delete("/tag/housing")
+    assert response.get_json()["count"] == 1
+
+    response = client.delete("/tag/housing")
+    assert response.get_json()["count"] == 0
