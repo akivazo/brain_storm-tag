@@ -15,6 +15,7 @@ def client():
 def test_add_tags(client: FlaskClient):
     response = client.post("/tag/tech")
     assert response.status_code == 201
+    assert response.get_json()["count"] == 1
     response = client.post("/tag/housing")
     assert response.status_code == 201
     response = client.post("/tag/travel")

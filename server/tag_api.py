@@ -27,6 +27,7 @@ def get_all_tags():
 @server.route("/tag/<name>", methods=["POST"])
 def add_tag(name):
     tag = tag_collection.find_one({"Name": name})
+    count = None
     if tag:
         # increaase count by one
         count = tag["Count"]
