@@ -27,14 +27,16 @@ def get_all_tags():
 @server.route("/tag/<name>", methods=["POST"])
 def add_tag(name):
     tag = tag_collection.find_one({"Name": name})
+    count = None
     if tag:
         # increaase count by one
         count = tag["Count"]
         count += 1
         tag_collection.update_one({"Name": name}, {"$inc": {"Count": 1}})
     else:
+        count = 1
         tag_collection.insert_one({"Name": name, "Count": 1})
-    return jsonify("Tag was added succefully"), 201
+    return jsonify({"count": count}), 201
 
 
 if __name__ == "__main__":
